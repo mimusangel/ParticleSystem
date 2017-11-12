@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:39:22 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 03:32:00 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/12 06:42:52 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,18 @@
 #  define TORADIANS(x)	(x * 0.0174533f)
 # endif
 
+typedef struct			s_xyzw
+{
+	float				x;
+	float				y;
+	float				z;
+	float				w;
+}						t_xyzw;
+
 typedef struct			s_cl
 {
 	cl_platform_id		platform_id;
-	cl_uint 			platform_count;
+	cl_uint				platform_count;
 	cl_device_id		device_id;
 	cl_uint				device_count;
 	cl_int				error;
@@ -41,7 +49,7 @@ typedef struct			s_cl
 	cl_command_queue	queue;
 	cl_program			program;
 	cl_kernel			kernel;
-	cl_mem				in_buffer;
+	cl_mem				gl_buffer;
 }						t_cl;
 
 typedef struct			s_env
@@ -50,7 +58,9 @@ typedef struct			s_env
 	t_cl				cl;
 	int					run;
 	int					nb_particles;
-	int					result;
+	GLuint				vao;
+	GLuint				gl_buffer_id;
+	GLuint				program_shader;
 }						t_env;
 
 /*
@@ -89,19 +99,23 @@ GLuint					load_shaders(const GLchar *v_src, const GLchar *f_src);
 ** uniform.c
 */
 void					uniform_int(GLuint program, GLchar *name, GLint value);
-void					uniform_float(GLuint program, GLchar *name, GLfloat value);
-void					uniform_mat4(GLuint program, GLchar *name, GLfloat *mat);
+void					uniform_float(GLuint program, GLchar *name,
+	GLfloat value);
+void					uniform_mat4(GLuint program, GLchar *name,
+	GLfloat *mat);
 /*
 ** mat4.c
 */
 GLfloat					*mat4_create(void);
 GLfloat					*mat4_identity(void);
-GLfloat					*mat4_perspective(float fov, float asp, float near, float far);
+GLfloat					*mat4_perspective(float fov, float asp, float near,
+	float far);
 GLfloat					*mat4_translate(float x, float y, float z);
 GLfloat					*mat4_multiplie(float *m0, float *m1);
 /*
 ** rotate.c
 */
-GLfloat					*mat4_axisangle(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
+GLfloat					*mat4_axisangle(GLfloat angle, GLfloat x, GLfloat y,
+	GLfloat z);
 GLfloat					*mat4_rotate(GLfloat x, GLfloat y, GLfloat z);
 #endif

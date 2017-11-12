@@ -25,8 +25,8 @@ __kernel void particles(global float4 *pos, global float4 *vel)
 {
 	int gid = get_global_id(0);
 
-	float3 normal = soft_normalize((float3)(pos[gid].x, pos[gid].y, pos[gid].z));
 	float len = soft_length((float3)(pos[gid].x, pos[gid].y, pos[gid].z));
+	float3 normal = pos[gid].xyz / len;//soft_normalize((float3)(pos[gid].x, pos[gid].y, pos[gid].z));
 
 	vel[gid].x = vel[gid].x - normal.x * 0.000115;
 	vel[gid].y = vel[gid].y - normal.y * 0.000115;

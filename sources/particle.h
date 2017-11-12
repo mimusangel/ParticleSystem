@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:39:22 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 06:42:52 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/12 07:14:18 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct			s_env
 	GLuint				vao;
 	GLuint				gl_buffer_id;
 	GLuint				program_shader;
+	size_t				frame;
 }						t_env;
 
 /*

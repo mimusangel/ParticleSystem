@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:40:03 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 06:45:04 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/12 07:16:14 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ static int		loop_cl(t_env *env)
 static void		loop(t_env *env)
 {
 	env->run = 1;
+	glfwSetTime(0.0);
+	env->frame = 0;
 	while (env->run)
 	{
 		glfwMakeContextCurrent(env->win);
@@ -48,6 +50,13 @@ static void		loop(t_env *env)
 			glfwPollEvents();
 			glFinish();
 			loop_cl(env);
+			env->frame += 1;
+			if (glfwGetTime() >= 1.0)
+			{
+				printf("fps: %zu\n", env->frame);
+				env->frame = 0;
+				glfwSetTime(glfwGetTime() - 1);
+			}
 		}
 	}
 }
@@ -56,7 +65,7 @@ int				main(void)
 {
 	t_env	env;
 
-	env.nb_particles = 1000;
+	env.nb_particles = 500000;
 	if (init(&env))
 		loop(&env);
 	terminate(&env);

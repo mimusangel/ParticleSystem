@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/12 00:27:27 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 06:25:07 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/12 12:32:20 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ static void				terminate_cl(t_cl *cl)
 		cl->error = clReleaseKernel(cl->kernel);
 	if (cl->program != NULL)
 		cl->error = clReleaseProgram(cl->program);
-	if (cl->gl_buffer != NULL)
-		cl->error = clReleaseMemObject(cl->gl_buffer);
+	if (cl->gl_pos != NULL)
+		cl->error = clReleaseMemObject(cl->gl_pos);
+	if (cl->gl_vel != NULL)
+		cl->error = clReleaseMemObject(cl->gl_vel);
 }
 
 void					terminate(t_env *env)

@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:40:03 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 07:16:14 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/12 12:50:44 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,18 @@
 
 static int		loop_cl(t_env *env)
 {
-	clEnqueueAcquireGLObjects(env->cl.queue, 1, &(env->cl.gl_buffer), 0, 0, 0);
-	env->cl.error = clSetKernelArg(env->cl.kernel, 0, sizeof(env->cl.gl_buffer),
-		&(env->cl.gl_buffer));
+	clEnqueueAcquireGLObjects(env->cl.queue, 1, &(env->cl.gl_pos), 0, 0, 0);
+	clEnqueueAcquireGLObjects(env->cl.queue, 1, &(env->cl.gl_vel), 0, 0, 0);
+	env->cl.error = clSetKernelArg(env->cl.kernel, 0, sizeof(env->cl.gl_pos),
+		&(env->cl.gl_pos));
+	env->cl.error = clSetKernelArg(env->cl.kernel, 1, sizeof(env->cl.gl_vel),
+		&(env->cl.gl_vel));
 	if ((env->cl.error = clEnqueueNDRangeKernel(env->cl.queue, env->cl.kernel,
 		1, 0, (size_t[1]){env->nb_particles}, NULL, 0, NULL, NULL))
 		!= CL_SUCCESS)
 		return (ft_puterror("OpenCL error: Enqueue Range Kernel"));
-	clEnqueueReleaseGLObjects(env->cl.queue, 1, &(env->cl.gl_buffer), 0, 0, 0);
+	clEnqueueReleaseGLObjects(env->cl.queue, 1, &(env->cl.gl_vel), 0, 0, 0);
+	clEnqueueReleaseGLObjects(env->cl.queue, 1, &(env->cl.gl_pos), 0, 0, 0);
 	clFinish(env->cl.queue);
 	return (1);
 }

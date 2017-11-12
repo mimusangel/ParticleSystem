@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:39:22 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 07:14:18 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/12 12:30:06 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ typedef struct			s_cl
 	cl_command_queue	queue;
 	cl_program			program;
 	cl_kernel			kernel;
-	cl_mem				gl_buffer;
+	cl_mem				gl_pos;
+	cl_mem				gl_vel;
 }						t_cl;
 
 typedef struct			s_env
@@ -59,7 +60,8 @@ typedef struct			s_env
 	int					run;
 	int					nb_particles;
 	GLuint				vao;
-	GLuint				gl_buffer_id;
+	GLuint				gl_pos_id;
+	GLuint				gl_vel_id;
 	GLuint				program_shader;
 	size_t				frame;
 }						t_env;

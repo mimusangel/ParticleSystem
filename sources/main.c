@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:40:03 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 12:50:44 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/14 00:36:46 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,35 @@ static int		loop_cl(t_env *env)
 	return (1);
 }
 
+static void		loop_shader(t_env *env)
+{
+	static t_xyzw	rot = (t_xyzw){0.0, 0.0, 0.0, 0.0};
+	GLfloat		*tmp[2];
+
+	glUseProgram(env->program_shader);
+	uniform_mat4(env->program_shader, "projection", env->projection);
+	if (env->model)
+		free(env->model);
+	tmp[0] = mat4_translate(0, 0, 4);
+	tmp[1] = mat4_rotate(rot.x, rot.y, rot.z);
+	env->model = mat4_multiplie(tmp[0], tmp[1]);
+	free(tmp[0]);
+	free(tmp[1]);
+	uniform_mat4(env->program_shader, "model", env->model);
+	// uniform_mat4(env->program_shader, "view", env->model);
+	glBindVertexArray(env->vao);
+	glDrawArrays(GL_POINTS, 0, env->nb_particles);
+	glBindVertexArray(0);
+	rot.x += 0.05f;
+	rot.y += 0.1f;
+	rot.z -= 0.025f;
+}
+
 static void		loop(t_env *env)
 {
 	env->run = 1;
 	glfwSetTime(0.0);
-	env->frame = 0;
+	glEnable(GL_DEPTH_TEST);
 	while (env->run)
 	{
 		glfwMakeContextCurrent(env->win);
@@ -44,12 +68,7 @@ static void		loop(t_env *env)
 		else
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glUseProgram(env->program_shader);
-			glPointSize(2.f);
-			glBindVertexArray(env->vao);
-			glDrawArrays(GL_POINTS, 0, env->nb_particles);
-			glBindVertexArray(0);
-			glPointSize(1.f);
+			loop_shader(env);
 			glfwSwapBuffers(env->win);
 			glfwPollEvents();
 			glFinish();
@@ -69,7 +88,9 @@ int				main(void)
 {
 	t_env	env;
 
-	env.nb_particles = 500000;
+
+	env.frame = 0;
+	env.nb_particles = 3000000;
 	if (init(&env))
 		loop(&env);
 	terminate(&env);

@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:39:22 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 12:30:06 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/14 00:26:51 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,10 @@ typedef struct			s_env
 	GLuint				vao;
 	GLuint				gl_pos_id;
 	GLuint				gl_vel_id;
+	GLuint				gl_color_id;
 	GLuint				program_shader;
+	GLfloat				*projection;
+	GLfloat				*model;
 	size_t				frame;
 }						t_env;
 
@@ -121,4 +124,11 @@ GLfloat					*mat4_multiplie(float *m0, float *m1);
 GLfloat					*mat4_axisangle(GLfloat angle, GLfloat x, GLfloat y,
 	GLfloat z);
 GLfloat					*mat4_rotate(GLfloat x, GLfloat y, GLfloat z);
+/*
+** quat.c
+*/
+GLfloat					*quat_tomat4(t_xyzw *quat);
+t_xyzw					*quat_mul(t_xyzw *q1, t_xyzw *q2);
+t_xyzw					*quat_axisangle(GLfloat angle, GLfloat x, GLfloat y,
+	GLfloat z);
 #endif

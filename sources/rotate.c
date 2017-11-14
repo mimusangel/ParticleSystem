@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 05:34:34 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 03:31:40 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/14 00:29:50 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,35 @@ GLfloat		*mat4_axisangle(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 
 GLfloat		*mat4_rotate(GLfloat x, GLfloat y, GLfloat z)
 {
-	GLfloat	*rx;
-	GLfloat	*ry;
-	GLfloat	*rz;
-	GLfloat	*tmp;
+	// GLfloat	*rx;
+	// GLfloat	*ry;
+	// GLfloat	*rz;
+	// GLfloat	*tmp;
+	// GLfloat	*res;
+	//
+	// rx = mat4_axisangle(x, 1.f, 0.f, 0.f);
+	// ry = mat4_axisangle(y, 0.f, 1.f, 0.f);
+	// rz = mat4_axisangle(z, 0.f, 0.f, 1.f);
+	// tmp = mat4_multiplie(rz, ry);
+	// res = mat4_multiplie(tmp, rx);
+	// free(tmp);
+	// free(rz);
+	// free(ry);
+	// free(rx);
+	t_xyzw	*rx;
+	t_xyzw	*ry;
+	t_xyzw	*rz;
+	t_xyzw	*tmp[2];
 	GLfloat	*res;
 
-	rx = mat4_axisangle(x, 1.f, 0.f, 0.f);
-	ry = mat4_axisangle(y, 0.f, 1.f, 0.f);
-	rz = mat4_axisangle(z, 0.f, 0.f, 1.f);
-	tmp = mat4_multiplie(rz, ry);
-	res = mat4_multiplie(tmp, rx);
-	free(tmp);
+	rx = quat_axisangle(x, 1.f, 0.f, 0.f);
+	ry = quat_axisangle(y, 0.f, 1.f, 0.f);
+	rz = quat_axisangle(z, 0.f, 0.f, 1.f);
+	tmp[0] = quat_mul(rz, ry);
+	tmp[1] = quat_mul(tmp[0], rx);
+	res = quat_tomat4(tmp[1]);
+	free(tmp[1]);
+	free(tmp[0]);
 	free(rz);
 	free(ry);
 	free(rx);

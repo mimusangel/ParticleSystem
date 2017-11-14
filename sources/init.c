@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/12 00:13:25 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 12:44:36 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/13 21:39:48 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,20 +70,31 @@ static void				bind_cgl(t_env *env, t_cl *cl)
 {
 	glGenVertexArrays(1, &(env->vao));
 	glBindVertexArray(env->vao);
+
 	glGenBuffers(1, &(env->gl_pos_id));
 	glBindBuffer(GL_ARRAY_BUFFER, env->gl_pos_id);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * env->nb_particles,
 		NULL, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	glEnableVertexAttribArray(0);
+
 	glGenBuffers(1, &(env->gl_vel_id));
 	glBindBuffer(GL_ARRAY_BUFFER, env->gl_vel_id);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * env->nb_particles,
 		NULL, GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	glEnableVertexAttribArray(1);
+
+	glGenBuffers(1, &(env->gl_color_id));
+	glBindBuffer(GL_ARRAY_BUFFER, env->gl_color_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * env->nb_particles,
+		NULL, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
+	glEnableVertexAttribArray(2);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
 	cl->gl_pos = clCreateFromGLBuffer(cl->context, CL_MEM_READ_WRITE,
 		env->gl_pos_id, &(cl->error));
 	cl->gl_vel = clCreateFromGLBuffer(cl->context, CL_MEM_READ_WRITE,
@@ -98,13 +109,25 @@ static void				bind_cgl(t_env *env, t_cl *cl)
 		points[i].w = 1.f;
 	}
 	glUnmapBuffer(GL_ARRAY_BUFFER);
+
+	glBindBuffer(GL_ARRAY_BUFFER, env->gl_color_id);
+	t_xyzw *color = (t_xyzw *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	for(int i = 0; i < env->nb_particles; i++)
+	{
+		color[i].x = points[i].x;
+		color[i].y = points[i].y;
+		color[i].z = points[i].z;
+		color[i].w = 1.f;
+	}
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
 	glBindBuffer(GL_ARRAY_BUFFER, env->gl_vel_id);
 	points = (t_xyzw *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 	for(int i = 0; i < env->nb_particles; i++)
 	{
-		points[i].x = 0.f;
-		points[i].y = 0.f;
-		points[i].z = 0.f;
+		points[i].x = (((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f) * 0.000115;
+		points[i].y = (((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f) * 0.000115;
+		points[i].z = (((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f) * 0.000115;
 		points[i].w = 1.f;
 	}
 	glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -144,6 +167,7 @@ int						init(t_env *env)
 	env->cl.kernel = NULL;
 	env->cl.gl_pos = NULL;
 	env->gl_pos_id = 0;
+	env->gl_vel_id = 0;
 	if (!init_gl(env))
 		return (0);
 	if (!init_cl(&(env->cl)))
@@ -152,5 +176,7 @@ int						init(t_env *env)
 		return (0);
 	env->program_shader = load_shaders(get_file_content("sample.vert", &size),
 		get_file_content("sample.frag", &size));
+	env->projection = mat4_perspective(70.0f, 1280.f / 720.f, 0.1f, 1000.0f);
+	env->model = mat4_translate(0, 0, 4);
 	return (1);
 }

@@ -6,7 +6,8 @@ FILES = main.c log.c \
 	file.c \
 	uniform.c shaders.c \
 	mat4.c rotate.c \
-	quat.c
+	quat.c \
+	input.c
 SRCS = $(addprefix $(SRC_DIR)/, $(FILES))
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

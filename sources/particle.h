@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:39:22 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/14 00:26:51 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/15 03:18:11 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct			s_cl
 	cl_kernel			kernel;
 	cl_mem				gl_pos;
 	cl_mem				gl_vel;
+	cl_mem				gravity;
 }						t_cl;
 
 typedef struct			s_env
@@ -67,6 +68,8 @@ typedef struct			s_env
 	GLfloat				*projection;
 	GLfloat				*model;
 	size_t				frame;
+	t_xyzw				gravity;
+	t_xyzw				mouse;
 }						t_env;
 
 /*
@@ -109,6 +112,8 @@ void					uniform_float(GLuint program, GLchar *name,
 	GLfloat value);
 void					uniform_mat4(GLuint program, GLchar *name,
 	GLfloat *mat);
+void					uniform_xyzw(GLuint program, GLchar *name,
+	t_xyzw *value);
 /*
 ** mat4.c
 */
@@ -131,4 +136,8 @@ GLfloat					*quat_tomat4(t_xyzw *quat);
 t_xyzw					*quat_mul(t_xyzw *q1, t_xyzw *q2);
 t_xyzw					*quat_axisangle(GLfloat angle, GLfloat x, GLfloat y,
 	GLfloat z);
+/*
+** input.c
+*/
+void					mouse_callback(GLFWwindow* w, double x, double y);
 #endif

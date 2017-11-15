@@ -1,0 +1,21 @@
+Fonction opencl initialisation particle
+mode de particule Struct avec tout dedans, souris ...
+norme
+argument de lancement changement du nombre de particule
+
+Mode:
+- Suivie de souris
+- Blackhole
+- Centre de graviter (simple atraction)
+
+Structure:
+- mode
+- souris
+- point de graviter
+- angle blackhole
+
+Retirer le buffer de couleur
+
+### BONUS ###
+Ajout du deplacement de la camera
+Ajout une inversion de matrice pour savoir ou on click

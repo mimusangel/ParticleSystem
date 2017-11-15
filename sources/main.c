@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:40:03 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/14 00:36:46 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/15 04:14:53 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ static int		loop_cl(t_env *env)
 		&(env->cl.gl_pos));
 	env->cl.error = clSetKernelArg(env->cl.kernel, 1, sizeof(env->cl.gl_vel),
 		&(env->cl.gl_vel));
+	env->cl.error = clSetKernelArg(env->cl.kernel, 2, sizeof(env->cl.gravity),
+		&(env->cl.gravity));
+	env->cl.error = clEnqueueWriteBuffer(env->cl.queue, env->cl.gravity, CL_TRUE, 0, sizeof(t_xyzw), &(env->gravity), 0, NULL, NULL);
+
 	if ((env->cl.error = clEnqueueNDRangeKernel(env->cl.queue, env->cl.kernel,
 		1, 0, (size_t[1]){env->nb_particles}, NULL, 0, NULL, NULL))
 		!= CL_SUCCESS)
@@ -36,15 +40,16 @@ static void		loop_shader(t_env *env)
 	GLfloat		*tmp[2];
 
 	glUseProgram(env->program_shader);
-	uniform_mat4(env->program_shader, "projection", env->projection);
-	if (env->model)
-		free(env->model);
-	tmp[0] = mat4_translate(0, 0, 4);
-	tmp[1] = mat4_rotate(rot.x, rot.y, rot.z);
-	env->model = mat4_multiplie(tmp[0], tmp[1]);
-	free(tmp[0]);
-	free(tmp[1]);
-	uniform_mat4(env->program_shader, "model", env->model);
+	uniform_xyzw(env->program_shader, "gravity", &(env->gravity));
+	// uniform_mat4(env->program_shader, "projection", env->projection);
+	// if (env->model)
+	// 	free(env->model);
+	// tmp[0] = mat4_translate(0, 0, 4);
+	// tmp[1] = mat4_rotate(rot.x, rot.y, rot.z);
+	// env->model = mat4_multiplie(tmp[0], tmp[1]);
+	// free(tmp[0]);
+	// free(tmp[1]);
+	// uniform_mat4(env->program_shader, "model", env->model);
 	// uniform_mat4(env->program_shader, "view", env->model);
 	glBindVertexArray(env->vao);
 	glDrawArrays(GL_POINTS, 0, env->nb_particles);
@@ -52,6 +57,19 @@ static void		loop_shader(t_env *env)
 	rot.x += 0.05f;
 	rot.y += 0.1f;
 	rot.z -= 0.025f;
+}
+
+static void		loop_input(t_env *env)
+{
+	int width;
+	int height;
+
+	if (glfwGetMouseButton(env->win, GLFW_MOUSE_BUTTON_LEFT)== GLFW_PRESS)
+	{
+		glfwGetWindowSize(env->win, &width, &height);
+		env->gravity.x = (env->mouse.x / (float)width) * 2.0f - 1.0f;
+		env->gravity.y = -((env->mouse.y / (float)height) * 2.0f - 1.0f);
+	}
 }
 
 static void		loop(t_env *env)
@@ -67,6 +85,7 @@ static void		loop(t_env *env)
 			env->run = 0;
 		else
 		{
+			loop_input(env);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			loop_shader(env);
 			glfwSwapBuffers(env->win);

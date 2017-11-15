@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 09:23:57 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/12 03:29:25 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/15 03:17:50 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,12 @@ void		uniform_int(GLuint program, GLchar *name, GLint value)
 
 	id = glGetUniformLocation(program, name);
 	glUniform1i(id, value);
+}
+
+void		uniform_xyzw(GLuint program, GLchar *name, t_xyzw *value)
+{
+	GLint id;
+
+	id = glGetUniformLocation(program, name);
+	glUniform4f(id, value->x, value->y, value->z, value->w);
 }

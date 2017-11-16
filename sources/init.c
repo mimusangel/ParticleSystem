@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/12 00:13:25 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/15 04:25:15 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/16 02:06:19 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ static int				init_gl(t_env *env)
 	glfwMakeContextCurrent(env->win);
 	glfwSetWindowUserPointer(env->win, env);
 	glfwSetCursorPosCallback(env->win, mouse_callback);
+	glfwSetKeyCallback(env->win, key_callback);
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 		return (ft_puterror("Erreur init glew!"));
@@ -101,16 +102,16 @@ static void				bind_cgl(t_env *env, t_cl *cl)
 	cl->gl_vel = clCreateFromGLBuffer(cl->context, CL_MEM_READ_WRITE,
 		env->gl_vel_id, &(cl->error));
 
-	cl->gravity = clCreateBuffer(cl->context, CL_MEM_READ_ONLY,
-		sizeof(t_xyzw), NULL, &(cl->error));
+	cl->system = clCreateBuffer(cl->context, CL_MEM_READ_ONLY,
+		sizeof(t_system), NULL, &(cl->error));
 
 	glBindBuffer(GL_ARRAY_BUFFER, env->gl_pos_id);
 	t_xyzw *points = (t_xyzw *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 	for(int i = 0; i < env->nb_particles; i++)
 	{
-		points[i].x = ((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f;
-		points[i].y = ((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f;
-		points[i].z = ((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f;
+		points[i].x = 0.f; // ((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f;
+		points[i].y = 0.f; // ((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f;
+		points[i].z = 0.f; // ((float)rand() / (float)(RAND_MAX)) * 2.0f - 1.0f;
 		points[i].w = 1.f;
 	}
 	glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -173,8 +174,8 @@ int						init(t_env *env)
 	env->cl.gl_pos = NULL;
 	env->gl_pos_id = 0;
 	env->gl_vel_id = 0;
-	env->gravity = (t_xyzw){0, 0, 0, 0};
-	env->mouse = (t_xyzw){0, 0, 0, 0};
+	env->system.gravity = (t_xyzw){0, 0, 0, 0};
+	env->system.mouse = (t_xyzw){0, 0, 0, 0};
 	if (!init_gl(env))
 		return (0);
 	if (!init_cl(&(env->cl)))
@@ -184,6 +185,6 @@ int						init(t_env *env)
 	env->program_shader = load_shaders(get_file_content("sample.vert", &size),
 		get_file_content("sample.frag", &size));
 	env->projection = mat4_perspective(70.0f, 1280.f / 720.f, 0.1f, 1000.0f);
-	env->model = mat4_translate(0, 0, 5);
+	env->model = mat4_translate(0, 0, 3);
 	return (1);
 }

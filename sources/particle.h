@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:39:22 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/15 03:18:11 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/15 22:21:57 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,13 @@ typedef struct			s_xyzw
 	float				w;
 }						t_xyzw;
 
+typedef struct			s_system
+{
+	t_xyzw				gravity;
+	t_xyzw				mouse;
+	int					mode;
+}						t_system;
+
 typedef struct			s_cl
 {
 	cl_platform_id		platform_id;
@@ -51,7 +58,7 @@ typedef struct			s_cl
 	cl_kernel			kernel;
 	cl_mem				gl_pos;
 	cl_mem				gl_vel;
-	cl_mem				gravity;
+	cl_mem				system;
 }						t_cl;
 
 typedef struct			s_env
@@ -68,8 +75,7 @@ typedef struct			s_env
 	GLfloat				*projection;
 	GLfloat				*model;
 	size_t				frame;
-	t_xyzw				gravity;
-	t_xyzw				mouse;
+	t_system			system;
 }						t_env;
 
 /*
@@ -140,4 +146,6 @@ t_xyzw					*quat_axisangle(GLfloat angle, GLfloat x, GLfloat y,
 ** input.c
 */
 void					mouse_callback(GLFWwindow* w, double x, double y);
+void					key_callback(GLFWwindow *w, int k, int sc, int a,
+	int m);
 #endif

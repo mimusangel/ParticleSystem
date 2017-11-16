@@ -14,7 +14,8 @@ void main()
 {
 	//mat4 mvp = projection * view * model;
 	//mat4 mvp = projection * model;
-	gl_Position = vec4(vertexPosition.xyz, 1);
+	vec3 scale = vec3(1.0, 16.0 / 9.0, 1.0);
+	gl_Position = vec4(scale * vertexPosition.xyz, 1);
 	float len = clamp(length(gravity.xyz - vertexPosition.xyz), 0.0, 1.0);
 	oColor = vec3(1.0 - len * 0.25, 1.0 - len * 0.5, 0.0);
 	//oColor = clamp(abs(vertexPosition.xyz), 0.0, 1.0);

@@ -6,7 +6,7 @@
 /*   By: mgallo <mgallo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 23:40:03 by mgallo            #+#    #+#             */
-/*   Updated: 2017/11/15 04:14:53 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/11/15 23:12:58 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ static int		loop_cl(t_env *env)
 		&(env->cl.gl_pos));
 	env->cl.error = clSetKernelArg(env->cl.kernel, 1, sizeof(env->cl.gl_vel),
 		&(env->cl.gl_vel));
-	env->cl.error = clSetKernelArg(env->cl.kernel, 2, sizeof(env->cl.gravity),
-		&(env->cl.gravity));
-	env->cl.error = clEnqueueWriteBuffer(env->cl.queue, env->cl.gravity, CL_TRUE, 0, sizeof(t_xyzw), &(env->gravity), 0, NULL, NULL);
-
+	env->cl.error = clSetKernelArg(env->cl.kernel, 2, sizeof(env->cl.system),
+		&(env->cl.system));
+	env->cl.error = clEnqueueWriteBuffer(env->cl.queue, env->cl.system,
+		CL_TRUE, 0, sizeof(t_system), &(env->system), 0, NULL, NULL);
 	if ((env->cl.error = clEnqueueNDRangeKernel(env->cl.queue, env->cl.kernel,
 		1, 0, (size_t[1]){env->nb_particles}, NULL, 0, NULL, NULL))
 		!= CL_SUCCESS)
@@ -40,7 +40,7 @@ static void		loop_shader(t_env *env)
 	GLfloat		*tmp[2];
 
 	glUseProgram(env->program_shader);
-	uniform_xyzw(env->program_shader, "gravity", &(env->gravity));
+	uniform_xyzw(env->program_shader, "gravity", &(env->system.gravity));
 	// uniform_mat4(env->program_shader, "projection", env->projection);
 	// if (env->model)
 	// 	free(env->model);
@@ -67,8 +67,8 @@ static void		loop_input(t_env *env)
 	if (glfwGetMouseButton(env->win, GLFW_MOUSE_BUTTON_LEFT)== GLFW_PRESS)
 	{
 		glfwGetWindowSize(env->win, &width, &height);
-		env->gravity.x = (env->mouse.x / (float)width) * 2.0f - 1.0f;
-		env->gravity.y = -((env->mouse.y / (float)height) * 2.0f - 1.0f);
+		env->system.gravity.x = (env->system.mouse.x / (float)width) * 2.0f - 1.0f;
+		env->system.gravity.y = -((env->system.mouse.y / (float)height) * 2.0f - 1.0f);
 	}
 }
 
@@ -107,9 +107,9 @@ int				main(void)
 {
 	t_env	env;
 
-
 	env.frame = 0;
 	env.nb_particles = 3000000;
+	env.system.mode = 0;
 	if (init(&env))
 		loop(&env);
 	terminate(&env);
